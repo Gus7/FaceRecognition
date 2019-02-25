@@ -197,3 +197,32 @@ _, predictions = torch.max(predictions, 1)
 plt.imshow(PIL.ToPIL(batch['image'][0]))
 print('Gound-true:', dataset.labels[batch['label'][0]])
 print('Prediction:', dataset.labels[predictions[0]])
+
+
+
+#####Кривые обучения
+
+def smooth_curve(points, factor=0.9):
+    smoothed_points = []
+    for point in points:
+        if smoothed_points:
+            previous = smoothed_points[-1]
+            smoothed_points.append(previous * factor + point * (1 - factor))
+        else:
+            smoothed_points.append(point)
+    return smoothed_points
+
+plt.clf()
+loss_values = smooth_curve(history['loss'])
+val_loss_values = smooth_curve(history['val_loss'])
+epochs = np.arange(len(loss_values))
+plt.plot(epochs, loss_values, 'bo', label='Training loss')
+plt.plot(epochs, val_loss_values, 'b', label='Validation loss')
+plt.title('Training and validation loss')
+plt.xlabel('Epochs')
+plt.ylabel('Loss')
+plt.legend()
+plt.show()
+
+Image.open('curves.png')
+
